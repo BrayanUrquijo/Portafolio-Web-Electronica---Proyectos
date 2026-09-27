@@ -9,7 +9,7 @@ async function readBlob<T>(key: string, fallback: T): Promise<T> {
   try {
     const { blobs } = await list({ prefix: key });
     if (blobs.length === 0) return fallback;
-    const response = await fetch(blobs[0].url, { cache: "no-store" });
+    const response = await fetch(blobs[0].downloadUrl, { cache: "no-store" });
     if (!response.ok) {
       console.error(`Blob fetch failed: ${response.status} for ${key}`);
       return fallback;
@@ -27,7 +27,7 @@ async function writeBlob<T>(key: string, data: T): Promise<void> {
     await del(blob.url);
   }
   await put(key, JSON.stringify(data), {
-    access: "public",
+    access: "private",
     contentType: "application/json",
   });
 }
