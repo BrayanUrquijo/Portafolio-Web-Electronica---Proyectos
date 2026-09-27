@@ -1,4 +1,4 @@
-import { put, list, del, getDownloadUrl } from "@vercel/blob";
+import { put, list, del, get, BlobNotFoundError } from "@vercel/blob";
 import type { Post, Profile } from "./types";
 import type { DataStorage } from "./storage";
 
@@ -7,16 +7,11 @@ const PROFILE_KEY = "data/profile.json";
 
 async function readBlob<T>(key: string, fallback: T): Promise<T> {
   try {
-    const { blobs } = await list({ prefix: key });
-    if (blobs.length === 0) return fallback;
-    const url = await getDownloadUrl(blobs[0].url);
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) {
-      console.error(`Blob fetch failed: ${response.status} for ${key}`);
-      return fallback;
-    }
-    return response.json();
+    const result = await get(key, { access: "private" });
+    if (!result) return fallback;
+    return new Response(result.stream).json();
   } catch (error) {
+    if (error instanceof BlobNotFoundError) return fallback;
     console.error(`readBlob error for ${key}:`, error);
     return fallback;
   }
