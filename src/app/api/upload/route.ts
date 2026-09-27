@@ -27,12 +27,17 @@ export async function POST(request: NextRequest) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  const hasCloudinary =
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET;
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-  if (hasCloudinary) {
+  console.log("Cloudinary config check:", {
+    hasCloudName: !!cloudName,
+    hasApiKey: !!apiKey,
+    hasApiSecret: !!apiSecret,
+  });
+
+  if (cloudName && apiKey && apiSecret) {
     try {
       const base64 = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64}`;
