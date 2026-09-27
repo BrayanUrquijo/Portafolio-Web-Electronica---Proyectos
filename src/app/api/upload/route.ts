@@ -69,6 +69,13 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  if (process.env.VERCEL) {
+    return NextResponse.json(
+      { success: false, error: "Cloudinary no está configurado. Agrega las variables NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY y CLOUDINARY_API_SECRET en Vercel." },
+      { status: 500 }
+    );
+  }
+
   const ext = file.name.split(".").pop() || "bin";
   const filename = `${uuid()}.${ext}`;
   const uploadsDir = path.join(process.cwd(), "public", "uploads");
