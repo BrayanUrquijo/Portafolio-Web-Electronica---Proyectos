@@ -1,4 +1,4 @@
-import { put, list, del } from "@vercel/blob";
+import { put, list, del, getDownloadUrl } from "@vercel/blob";
 import type { Post, Profile } from "./types";
 import type { DataStorage } from "./storage";
 
@@ -9,7 +9,8 @@ async function readBlob<T>(key: string, fallback: T): Promise<T> {
   try {
     const { blobs } = await list({ prefix: key });
     if (blobs.length === 0) return fallback;
-    const response = await fetch(blobs[0].downloadUrl, { cache: "no-store" });
+    const url = await getDownloadUrl(blobs[0].url);
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
       console.error(`Blob fetch failed: ${response.status} for ${key}`);
       return fallback;
