@@ -1,4 +1,4 @@
-import { put, list, del, get, BlobNotFoundError } from "@vercel/blob";
+import { put, get, BlobNotFoundError } from "@vercel/blob";
 import type { Post, Profile } from "./types";
 import type { DataStorage } from "./storage";
 
@@ -18,12 +18,10 @@ async function readBlob<T>(key: string, fallback: T): Promise<T> {
 }
 
 async function writeBlob<T>(key: string, data: T): Promise<void> {
-  const { blobs } = await list({ prefix: key });
-  for (const blob of blobs) {
-    await del(blob.url);
-  }
   await put(key, JSON.stringify(data), {
     access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/json",
   });
 }
