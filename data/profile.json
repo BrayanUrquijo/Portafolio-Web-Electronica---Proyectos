@@ -1,0 +1,20 @@
+{
+  "name": "Brayan Fidel Carmona Urquijo",
+  "photoUrl": "/uploads/b2052101-2a5e-4ce0-9aa7-a26734822e3f.jpg",
+  "photoPublicId": "",
+  "bio": "Estudiante de Ingeniería Electrónica apasionado por la tecnología y la innovación.",
+  "careers": [
+    {
+      "name": "Ingeniería en Sistemas",
+      "semester": 6
+    },
+    {
+      "name": "Tecnología en Electrónica Industrial",
+      "semester": 3
+    }
+  ],
+  "university": "Universidad del Valle",
+  "socialLinks": {},
+  "goals": [],
+  "updatedAt": "2026-09-26T21:51:50.048Z"
+}
