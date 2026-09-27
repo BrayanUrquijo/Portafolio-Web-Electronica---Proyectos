@@ -40,7 +40,8 @@ export async function PUT(
     }
     const updated = await storage.updatePost(id, body);
     return NextResponse.json({ success: true, data: updated });
-  } catch {
+  } catch (error) {
+    console.error("PUT /api/posts error:", error);
     return NextResponse.json(
       { success: false, error: "Post not found" },
       { status: 404 }

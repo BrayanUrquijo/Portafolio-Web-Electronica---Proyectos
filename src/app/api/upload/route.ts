@@ -31,12 +31,6 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.CLOUDINARY_API_KEY;
   const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-  console.log("Cloudinary config check:", {
-    hasCloudName: !!cloudName,
-    hasApiKey: !!apiKey,
-    hasApiSecret: !!apiSecret,
-  });
-
   if (cloudName && apiKey && apiSecret) {
     try {
       const base64 = buffer.toString("base64");

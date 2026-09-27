@@ -9,9 +9,14 @@ async function readBlob<T>(key: string, fallback: T): Promise<T> {
   try {
     const { blobs } = await list({ prefix: key });
     if (blobs.length === 0) return fallback;
-    const response = await fetch(blobs[0].url);
+    const response = await fetch(blobs[0].url, { cache: "no-store" });
+    if (!response.ok) {
+      console.error(`Blob fetch failed: ${response.status} for ${key}`);
+      return fallback;
+    }
     return response.json();
-  } catch {
+  } catch (error) {
+    console.error(`readBlob error for ${key}:`, error);
     return fallback;
   }
 }
