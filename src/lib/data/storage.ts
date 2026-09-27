@@ -17,7 +17,10 @@ let storageInstance: DataStorage | null = null;
 export function getStorage(): DataStorage {
   if (storageInstance) return storageInstance;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
+  console.log(`Storage: using ${hasBlob ? "BlobStorage" : "LocalStorage"}, VERCEL=${!!process.env.VERCEL}`);
+
+  if (hasBlob) {
     storageInstance = new BlobStorage();
   } else {
     storageInstance = new LocalStorage();
