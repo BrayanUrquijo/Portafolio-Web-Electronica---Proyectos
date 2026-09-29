@@ -18,9 +18,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Portafolio | Ingeniería Electrónica",
+  title: "Portafolio | Tecnología En Electrónica Industrial",
   description:
-    "Portafolio de proyectos, prácticas y evidencias académicas de Ingeniería Electrónica",
+    "Portafolio de proyectos, prácticas y evidencias académicas de Tecnología En Electrónica Industrial",
 };
 
 export default function RootLayout({

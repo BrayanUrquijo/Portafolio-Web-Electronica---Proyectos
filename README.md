@@ -1,6 +1,6 @@
-# Portafolio Web - Ingeniería Electrónica
+# Portafolio Web - Tecnología En Electrónica Industrial
 
-Portafolio web personal para estudiantes de Ingeniería Electrónica. Permite publicar proyectos, prácticas y evidencias académicas con imágenes, videos y texto.
+Portafolio web personal para estudiantes de Tecnología En Electrónica Industrial. Permite publicar proyectos, prácticas y evidencias académicas con imágenes, videos y texto.
 
 ## Stack
 

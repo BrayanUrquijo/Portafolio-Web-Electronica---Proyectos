@@ -22,7 +22,7 @@ export function FeedContent({ posts }: { posts: Post[] }) {
             PORTAFOLIO
           </h1>
           <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-            Proyectos, prácticas y evidencias de Ingeniería Electrónica
+            Proyectos, prácticas y evidencias de Tecnología en Electrónica Industrial.
           </p>
           <div className="flex justify-center">
             <div className="w-20 h-0.5 rounded-full bg-gradient-to-r from-neon-cyan to-neon-violet" />
