@@ -72,7 +72,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
                   transition={{ duration: 0.5 }}
                   className="text-text-secondary text-lg tracking-wider"
                 >
-                  Ingeniería Electrónica
+                  Tecnologia En Electrónica Industrial
                 </motion.p>
               )}
 
