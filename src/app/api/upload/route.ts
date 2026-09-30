@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
@@ -51,32 +52,30 @@ export async function POST(request: NextRequest) {
       const raw = isRawFile(file.type, file.name);
 
       if (raw) {
-        const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
-            {
-              folder: "portafolio",
-              resource_type: "raw",
-              public_id: file.name.replace(/\.[^.]+$/, ""),
-              format: file.name.split(".").pop(),
-            },
-            (error, result) => {
-              if (error || !result) reject(error || new Error("Upload failed"));
-              else resolve(result as Record<string, unknown>);
-            }
-          );
-          stream.end(buffer);
-        });
+        const tmpPath = path.join(os.tmpdir(), `upload-${uuid()}-${file.name}`);
+        await fs.writeFile(tmpPath, buffer);
 
-        return NextResponse.json({
-          success: true,
-          data: {
-            url: result.secure_url as string,
-            publicId: result.public_id as string,
-            format: result.format as string,
-            filename: file.name,
-            resourceType: "raw",
-          },
-        });
+        try {
+          const result = await cloudinary.uploader.upload(tmpPath, {
+            folder: "portafolio",
+            resource_type: "raw",
+            public_id: file.name.replace(/\.[^.]+$/, ""),
+            format: file.name.split(".").pop(),
+          });
+
+          return NextResponse.json({
+            success: true,
+            data: {
+              url: result.secure_url,
+              publicId: result.public_id,
+              format: result.format,
+              filename: file.name,
+              resourceType: "raw",
+            },
+          });
+        } finally {
+          await fs.unlink(tmpPath).catch(() => {});
+        }
       }
 
       const base64 = buffer.toString("base64");
