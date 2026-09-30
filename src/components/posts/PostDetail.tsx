@@ -128,7 +128,7 @@ export function PostDetail({ post }: { post: Post }) {
                       </div>
                       <div className="flex items-center gap-3">
                         <a
-                          href={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
+                          href={doc.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-neon-cyan text-sm hover:underline flex items-center gap-1"
@@ -139,7 +139,7 @@ export function PostDetail({ post }: { post: Post }) {
                           </svg>
                         </a>
                         <a
-                          href={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
+                          href={doc.url}
                           download={doc.filename || "documento.pdf"}
                           className="text-text-muted text-sm hover:text-text-primary transition-colors"
                         >
@@ -148,7 +148,7 @@ export function PostDetail({ post }: { post: Post }) {
                       </div>
                     </div>
                     <iframe
-                      src={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
+                      src={doc.url}
                       className="w-full h-[500px] bg-white"
                       title={doc.filename || doc.alt || "PDF"}
                     />
