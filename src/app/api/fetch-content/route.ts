@@ -17,9 +17,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }
 
+  const isPdf = url.endsWith(".pdf") || request.nextUrl.searchParams.get("type") === "pdf";
+
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+
+    if (isPdf) {
+      const buffer = await res.arrayBuffer();
+      return new NextResponse(buffer, {
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": "inline",
+        },
+      });
+    }
+
     const text = await res.text();
     return new NextResponse(text, {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
