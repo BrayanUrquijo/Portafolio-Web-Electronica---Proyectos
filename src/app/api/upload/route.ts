@@ -106,9 +106,10 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (error) {
-      console.error("Cloudinary upload error:", error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("Cloudinary upload error:", message, error);
       return NextResponse.json(
-        { success: false, error: "Error al subir archivo" },
+        { success: false, error: `Error al subir archivo: ${message}` },
         { status: 500 }
       );
     }
