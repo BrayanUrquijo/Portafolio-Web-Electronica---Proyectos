@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/Badge";
+import { MarkdownViewer } from "@/components/media/MarkdownViewer";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/lib/data/types";
 
@@ -77,30 +78,74 @@ export function PostDetail({ post }: { post: Post }) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      {post.media.length > 0 && (
+      {post.media.filter((m) => m.type === "image" || m.type === "video").length > 0 && (
         <div className="mt-8">
           <h2 className="font-display text-xl font-bold text-text-primary mb-4">Galería</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {post.media.map((media, index) => (
-              <div key={index} className="rounded-lg overflow-hidden border border-surface-border">
-                {media.type === "image" ? (
-                  <Image
-                    src={media.url}
-                    alt={media.alt || `Imagen ${index + 1}`}
-                    width={media.width || 800}
-                    height={media.height || 600}
-                    className="w-full h-auto"
-                  />
+            {post.media
+              .filter((m) => m.type === "image" || m.type === "video")
+              .map((media, index) => (
+                <div key={index} className="rounded-lg overflow-hidden border border-surface-border">
+                  {media.type === "image" ? (
+                    <Image
+                      src={media.url}
+                      alt={media.alt || `Imagen ${index + 1}`}
+                      width={media.width || 800}
+                      height={media.height || 600}
+                      className="w-full h-auto"
+                    />
+                  ) : (
+                    <video
+                      src={media.url}
+                      controls
+                      className="w-full"
+                      preload="metadata"
+                    />
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {post.media.filter((m) => m.type === "pdf" || m.type === "markdown").length > 0 && (
+        <div className="mt-8">
+          <h2 className="font-display text-xl font-bold text-text-primary mb-4">Documentos</h2>
+          <div className="space-y-6">
+            {post.media
+              .filter((m) => m.type === "pdf" || m.type === "markdown")
+              .map((doc, index) =>
+                doc.type === "markdown" ? (
+                  <MarkdownViewer key={index} url={doc.url} filename={doc.filename || doc.alt} />
                 ) : (
-                  <video
-                    src={media.url}
-                    controls
-                    className="w-full"
-                    preload="metadata"
-                  />
-                )}
-              </div>
-            ))}
+                  <div key={index} className="rounded-lg border border-surface-border overflow-hidden">
+                    <div className="px-4 py-3 border-b border-surface-border bg-surface-elevated flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        <span className="text-sm font-medium text-text-primary">{doc.filename || doc.alt || "Documento PDF"}</span>
+                      </div>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-neon-cyan text-sm hover:underline flex items-center gap-1"
+                      >
+                        Abrir PDF
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                      </a>
+                    </div>
+                    <iframe
+                      src={doc.url}
+                      className="w-full h-[500px] bg-white"
+                      title={doc.filename || doc.alt || "PDF"}
+                    />
+                  </div>
+                )
+              )}
           </div>
         </div>
       )}

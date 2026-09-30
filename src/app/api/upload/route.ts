@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
           format: result.format,
           width: result.width,
           height: result.height,
-          filename: result.original_filename,
+          filename: file.name,
+          resourceType: result.resource_type,
         },
       });
     } catch (error) {

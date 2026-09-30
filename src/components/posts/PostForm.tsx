@@ -31,15 +31,25 @@ export function PostForm({ post }: PostFormProps) {
   const [error, setError] = useState("");
 
   function handleFileUploaded(url: string, file: File) {
-    const isVideo = file.type.startsWith("video/");
+    let type: PostMedia["type"];
+    if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+      type = "pdf";
+    } else if (file.type === "text/markdown" || file.name.endsWith(".md")) {
+      type = "markdown";
+    } else if (file.type.startsWith("video/")) {
+      type = "video";
+    } else {
+      type = "image";
+    }
     const newMedia: PostMedia = {
-      type: isVideo ? "video" : "image",
+      type,
       url,
       publicId: "",
       alt: file.name,
+      filename: file.name,
     };
     setMedia((prev) => [...prev, newMedia]);
-    if (!coverImage && !isVideo) setCoverImage(newMedia);
+    if (!coverImage && type === "image") setCoverImage(newMedia);
   }
 
   function removeMedia(index: number) {
@@ -163,7 +173,7 @@ export function PostForm({ post }: PostFormProps) {
 
       <div className="space-y-3">
         <label className="block text-sm font-medium text-text-secondary">
-          Imágenes y Videos de la galería
+          Archivos de la galería
         </label>
         <FileUploader
           onUpload={handleFileUploaded}
@@ -178,11 +188,21 @@ export function PostForm({ post }: PostFormProps) {
                 ) : (
                   <div className="w-full h-32 bg-surface-elevated flex items-center justify-center">
                     <div className="text-center">
-                      <svg className="w-8 h-8 mx-auto text-text-muted mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-                      </svg>
-                      <p className="text-xs text-text-muted truncate px-2">{m.alt || "Video"}</p>
+                      {m.type === "pdf" ? (
+                        <svg className="w-8 h-8 mx-auto text-red-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                      ) : m.type === "markdown" ? (
+                        <svg className="w-8 h-8 mx-auto text-neon-cyan mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-8 h-8 mx-auto text-text-muted mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                        </svg>
+                      )}
+                      <p className="text-xs text-text-muted truncate px-2">{m.filename || m.alt || m.type.toUpperCase()}</p>
                     </div>
                   </div>
                 )}
