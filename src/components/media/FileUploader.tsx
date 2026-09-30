@@ -21,6 +21,7 @@ export function FileUploader({
 }: FileUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function uploadFile(file: File) {
@@ -38,11 +39,14 @@ export function FileUploader({
 
   async function handleFiles(files: FileList | File[]) {
     setUploading(true);
+    setUploadError("");
     for (const file of Array.from(files)) {
       try {
         const url = await uploadFile(file);
         onUpload(url, file);
       } catch (err) {
+        const msg = err instanceof Error ? err.message : "Error al subir";
+        setUploadError(`Error subiendo "${file.name}": ${msg}`);
         console.error("Upload failed:", err);
       }
     }
@@ -110,6 +114,10 @@ export function FileUploader({
           </svg>
           Subiendo...
         </div>
+      )}
+
+      {uploadError && (
+        <p className="mt-2 text-sm text-red-400">{uploadError}</p>
       )}
     </div>
   );

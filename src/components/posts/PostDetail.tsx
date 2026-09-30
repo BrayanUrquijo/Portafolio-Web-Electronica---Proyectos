@@ -126,20 +126,29 @@ export function PostDetail({ post }: { post: Post }) {
                         </svg>
                         <span className="text-sm font-medium text-text-primary">{doc.filename || doc.alt || "Documento PDF"}</span>
                       </div>
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-neon-cyan text-sm hover:underline flex items-center gap-1"
-                      >
-                        Abrir PDF
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                      </a>
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-neon-cyan text-sm hover:underline flex items-center gap-1"
+                        >
+                          Abrir PDF
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                          </svg>
+                        </a>
+                        <a
+                          href={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
+                          download={doc.filename || "documento.pdf"}
+                          className="text-text-muted text-sm hover:text-text-primary transition-colors"
+                        >
+                          Descargar
+                        </a>
+                      </div>
                     </div>
                     <iframe
-                      src={doc.url}
+                      src={`/api/fetch-content?url=${encodeURIComponent(doc.url)}&type=pdf`}
                       className="w-full h-[500px] bg-white"
                       title={doc.filename || doc.alt || "PDF"}
                     />

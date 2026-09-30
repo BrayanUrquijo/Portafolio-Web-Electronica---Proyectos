@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
@@ -12,6 +13,21 @@ cloudinary.config({
 
 function isImage(mimeType: string) {
   return mimeType.startsWith("image/");
+}
+
+function isVideo(mimeType: string) {
+  return mimeType.startsWith("video/");
+}
+
+function isRawFile(mimeType: string, fileName: string) {
+  return (
+    mimeType === "application/pdf" ||
+    mimeType === "text/markdown" ||
+    mimeType === "text/x-markdown" ||
+    fileName.endsWith(".md") ||
+    fileName.endsWith(".pdf") ||
+    (!isImage(mimeType) && !isVideo(mimeType))
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -33,6 +49,35 @@ export async function POST(request: NextRequest) {
 
   if (cloudName && apiKey && apiSecret) {
     try {
+      const raw = isRawFile(file.type, file.name);
+
+      if (raw) {
+        const tmpPath = path.join(os.tmpdir(), `upload-${uuid()}-${file.name}`);
+        await fs.writeFile(tmpPath, buffer);
+
+        try {
+          const result = await cloudinary.uploader.upload(tmpPath, {
+            folder: "portafolio",
+            resource_type: "raw",
+            public_id: file.name.replace(/\.[^.]+$/, ""),
+            format: file.name.split(".").pop(),
+          });
+
+          return NextResponse.json({
+            success: true,
+            data: {
+              url: result.secure_url,
+              publicId: result.public_id,
+              format: result.format,
+              filename: file.name,
+              resourceType: "raw",
+            },
+          });
+        } finally {
+          await fs.unlink(tmpPath).catch(() => {});
+        }
+      }
+
       const base64 = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64}`;
 
@@ -61,9 +106,10 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (error) {
-      console.error("Cloudinary upload error:", error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("Cloudinary upload error:", message, error);
       return NextResponse.json(
-        { success: false, error: "Error al subir archivo" },
+        { success: false, error: `Error al subir archivo: ${message}` },
         { status: 500 }
       );
     }
