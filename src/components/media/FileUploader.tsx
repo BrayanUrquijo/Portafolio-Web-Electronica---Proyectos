@@ -14,7 +14,7 @@ interface FileUploaderProps {
 
 export function FileUploader({
   onUpload,
-  accept = "image/*,video/*",
+  accept = "image/*,video/*,application/pdf,.pdf,text/markdown,.md",
   multiple = true,
   label = "Subir archivos",
   className,
@@ -78,7 +78,7 @@ export function FileUploader({
           <p className="text-sm text-text-secondary">
             {uploading ? "Subiendo..." : "Arrastra archivos aquí o haz click"}
           </p>
-          <p className="text-xs text-text-muted">Imágenes y videos</p>
+          <p className="text-xs text-text-muted">Imágenes, videos, PDFs y Markdown</p>
         </div>
       </div>
 

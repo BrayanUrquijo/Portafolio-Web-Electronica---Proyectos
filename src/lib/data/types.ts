@@ -1,10 +1,11 @@
 export interface PostMedia {
-  type: "image" | "video";
+  type: "image" | "video" | "pdf" | "markdown";
   url: string;
   publicId: string;
   alt?: string;
   width?: number;
   height?: number;
+  filename?: string;
 }
 
 export type PostCategory =
