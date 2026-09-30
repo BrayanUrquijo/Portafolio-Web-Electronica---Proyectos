@@ -14,6 +14,21 @@ function isImage(mimeType: string) {
   return mimeType.startsWith("image/");
 }
 
+function isVideo(mimeType: string) {
+  return mimeType.startsWith("video/");
+}
+
+function isRawFile(mimeType: string, fileName: string) {
+  return (
+    mimeType === "application/pdf" ||
+    mimeType === "text/markdown" ||
+    mimeType === "text/x-markdown" ||
+    fileName.endsWith(".md") ||
+    fileName.endsWith(".pdf") ||
+    (!isImage(mimeType) && !isVideo(mimeType))
+  );
+}
+
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
@@ -33,6 +48,37 @@ export async function POST(request: NextRequest) {
 
   if (cloudName && apiKey && apiSecret) {
     try {
+      const raw = isRawFile(file.type, file.name);
+
+      if (raw) {
+        const result = await new Promise<Record<string, unknown>>((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "portafolio",
+              resource_type: "raw",
+              public_id: file.name.replace(/\.[^.]+$/, ""),
+              format: file.name.split(".").pop(),
+            },
+            (error, result) => {
+              if (error || !result) reject(error || new Error("Upload failed"));
+              else resolve(result as Record<string, unknown>);
+            }
+          );
+          stream.end(buffer);
+        });
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            url: result.secure_url as string,
+            publicId: result.public_id as string,
+            format: result.format as string,
+            filename: file.name,
+            resourceType: "raw",
+          },
+        });
+      }
+
       const base64 = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64}`;
 
