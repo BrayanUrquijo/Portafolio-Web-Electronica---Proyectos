@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   if (raw && process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const blob = await put(`uploads/${file.name}`, buffer, {
-        access: "public",
+        access: "private",
         addRandomSuffix: true,
       });
 
