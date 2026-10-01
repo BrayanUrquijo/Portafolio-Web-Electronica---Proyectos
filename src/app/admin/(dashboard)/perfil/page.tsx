@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { AvatarUploader } from "@/components/media/AvatarUploader";
 import { v4 as uuid } from "uuid";
+import { THEME_PRESETS } from "@/lib/theme";
 import type { Profile, Goal, GoalStatus, Career } from "@/lib/data/types";
 
 export default function AdminProfilePage() {
@@ -16,6 +17,10 @@ export default function AdminProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [themeColor, setThemeColor] = useState("cyan");
+  const [savingTheme, setSavingTheme] = useState(false);
+  const [themeMessage, setThemeMessage] = useState("");
 
   const [currentPwd, setCurrentPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
@@ -54,12 +59,16 @@ export default function AdminProfilePage() {
       .then((r) => r.json())
       .then((data) => {
         const p = data.data;
-        // Migrar formato viejo (career string) al nuevo (careers array)
         if (p && !p.careers) {
           p.careers = [{ name: p.career || "", semester: p.currentSemester || 1 }];
         }
         setProfile(p);
         setLoading(false);
+      });
+    fetch("/api/theme")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.data?.color) setThemeColor(data.data.color);
       });
   }, []);
 
@@ -110,6 +119,35 @@ export default function AdminProfilePage() {
       ...profile,
       careers: profile.careers.filter((_, i) => i !== index),
     });
+  }
+
+  function previewTheme(color: string) {
+    const preset = THEME_PRESETS[color];
+    if (!preset) return;
+    setThemeColor(color);
+    document.documentElement.style.setProperty("--neon-primary", preset.dark);
+    document.documentElement.style.setProperty("--neon-primary-light", preset.light);
+  }
+
+  async function handleSaveTheme() {
+    setSavingTheme(true);
+    setThemeMessage("");
+    try {
+      const res = await fetch("/api/theme", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ color: themeColor }),
+      });
+      if (res.ok) {
+        setThemeMessage("Color guardado");
+      } else {
+        setThemeMessage("Error al guardar");
+      }
+    } catch {
+      setThemeMessage("Error de conexión");
+    } finally {
+      setSavingTheme(false);
+    }
   }
 
   function addGoal() {
@@ -369,6 +407,50 @@ export default function AdminProfilePage() {
           Guardar Perfil
         </Button>
       </div>
+
+      <section className="border-t border-surface-border pt-6 space-y-4">
+        <h2 className="font-display text-lg font-bold text-text-primary flex items-center gap-2">
+          <svg className="w-5 h-5 text-neon-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+          </svg>
+          Color del tema
+        </h2>
+        <p className="text-sm text-text-muted">
+          Elige el color principal de la web. El cambio se ve en tiempo real.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          {Object.entries(THEME_PRESETS).map(([key, preset]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => previewTheme(key)}
+              className={`group relative w-12 h-12 rounded-full border-2 transition-all duration-200 ${
+                themeColor === key
+                  ? "border-white scale-110 shadow-lg"
+                  : "border-surface-border hover:scale-105"
+              }`}
+              style={{ backgroundColor: preset.dark }}
+              title={preset.label}
+            >
+              {themeColor === key && (
+                <svg className="w-5 h-5 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          <Button onClick={handleSaveTheme} isLoading={savingTheme} variant="secondary">
+            Guardar color
+          </Button>
+          {themeMessage && (
+            <span className={themeMessage.includes("guardado") ? "text-neon-green text-sm" : "text-red-400 text-sm"}>
+              {themeMessage}
+            </span>
+          )}
+        </div>
+      </section>
 
       <section className="border-t border-surface-border pt-6 space-y-4">
         <button

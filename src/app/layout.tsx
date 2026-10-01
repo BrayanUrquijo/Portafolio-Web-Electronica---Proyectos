@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { HelpButton } from "@/components/layout/HelpButton";
+import { getThemeColor, getThemeCSS } from "@/lib/theme";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -24,13 +25,19 @@ export const metadata: Metadata = {
     "Portafolio de proyectos, prácticas y evidencias académicas de Tecnología En Electrónica Industrial",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const themeColor = await getThemeColor();
+  const themeCSS = getThemeCSS(themeColor);
+
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+      </head>
       <body
         className={`${orbitron.variable} ${inter.variable} font-[family-name:var(--font-inter)] antialiased`}
       >

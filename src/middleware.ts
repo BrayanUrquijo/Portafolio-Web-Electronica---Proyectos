@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth/jwt";
 
 export const config = {
-  matcher: ["/admin/:path+", "/api/posts", "/api/posts/:path*", "/api/profile", "/api/upload"],
+  matcher: ["/admin/:path+", "/api/posts", "/api/posts/:path*", "/api/profile", "/api/upload", "/api/theme"],
 };
 
 export async function middleware(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     request.method === "GET" &&
-    (pathname.startsWith("/api/posts") || pathname === "/api/profile")
+    (pathname.startsWith("/api/posts") || pathname === "/api/profile" || pathname === "/api/theme")
   ) {
     return NextResponse.next();
   }

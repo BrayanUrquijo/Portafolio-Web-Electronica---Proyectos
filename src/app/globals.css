@@ -52,6 +52,14 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ============ DYNAMIC PRIMARY COLOR ============ */
+
+:root {
+  --color-neon-cyan: var(--neon-primary, #00f0ff);
+  --shadow-neon-cyan: 0 0 10px var(--color-neon-cyan), 0 0 40px color-mix(in srgb, var(--color-neon-cyan) 20%, transparent);
+  --shadow-neon-sm: 0 0 5px color-mix(in srgb, var(--color-neon-cyan) 33%, transparent);
+}
+
 /* ============ LIGHT MODE ============ */
 
 [data-theme="light"] {
@@ -65,7 +73,7 @@
   --color-text-secondary: #3f3f46;
   --color-text-muted: #71717a;
 
-  --color-neon-cyan: #0891b2;
+  --color-neon-cyan: var(--neon-primary-light, #0891b2);
   --color-neon-magenta: #c026d3;
   --color-neon-violet: #7c3aed;
   --color-neon-blue: #2563eb;
@@ -73,10 +81,10 @@
   --color-neon-yellow: #ca8a04;
   --color-neon-pink: #db2777;
 
-  --shadow-neon-cyan: 0 2px 12px #0891b233;
+  --shadow-neon-cyan: 0 2px 12px color-mix(in srgb, var(--color-neon-cyan) 20%, transparent);
   --shadow-neon-magenta: 0 2px 12px #c026d333;
   --shadow-neon-violet: 0 2px 12px #7c3aed33;
-  --shadow-neon-sm: 0 1px 4px #0891b222;
+  --shadow-neon-sm: 0 1px 4px color-mix(in srgb, var(--color-neon-cyan) 13%, transparent);
 }
 
 /* ============ GLOBAL STYLES ============ */
@@ -88,13 +96,13 @@ body {
 }
 
 ::selection {
-  background-color: #00f0ff33;
-  color: #00f0ff;
+  background-color: color-mix(in srgb, var(--color-neon-cyan) 20%, transparent);
+  color: var(--color-neon-cyan);
 }
 
 [data-theme="light"] ::selection {
-  background-color: #0891b233;
-  color: #0891b2;
+  background-color: color-mix(in srgb, var(--color-neon-cyan) 20%, transparent);
+  color: var(--color-neon-cyan);
 }
 
 /* Scrollbar */
@@ -134,7 +142,7 @@ body {
 }
 
 @utility text-glow-cyan {
-  text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff55;
+  text-shadow: 0 0 10px var(--color-neon-cyan), 0 0 20px color-mix(in srgb, var(--color-neon-cyan) 33%, transparent);
 }
 
 @utility text-glow-magenta {
