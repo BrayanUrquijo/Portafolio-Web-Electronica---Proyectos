@@ -20,6 +20,7 @@ export function useSecretGesture(threshold = 5, timeWindow = 3000) {
       clicksRef.current = [];
       if (singleClickTimer.current) clearTimeout(singleClickTimer.current);
       router.push("/admin");
+      setTimeout(() => { triggered.current = false; }, 3000);
       return;
     }
 
