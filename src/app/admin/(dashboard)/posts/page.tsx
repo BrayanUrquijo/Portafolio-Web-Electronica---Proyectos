@@ -18,6 +18,7 @@ export default function AdminPostsPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+  const [togglingPublish, setTogglingPublish] = useState(false);
 
   useEffect(() => {
     fetch("/api/posts?all=true")
@@ -54,6 +55,27 @@ export default function AdminPostsPage() {
       setComments([]);
     } finally {
       setLoadingComments(false);
+    }
+  }
+
+  async function handleTogglePublish() {
+    if (!previewPost) return;
+    setTogglingPublish(true);
+    try {
+      const res = await fetch(`/api/posts/${previewPost.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...previewPost, published: !previewPost.published }),
+      });
+      if (res.ok) {
+        const updated = { ...previewPost, published: !previewPost.published };
+        setPreviewPost(updated);
+        setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+      }
+    } catch {
+      // silent
+    } finally {
+      setTogglingPublish(false);
     }
   }
 
@@ -160,6 +182,8 @@ export default function AdminPostsPage() {
           open={!!previewPost}
           post={previewPost}
           onClose={() => setPreviewPost(null)}
+          onTogglePublish={handleTogglePublish}
+          toggleLoading={togglingPublish}
         />
       )}
 

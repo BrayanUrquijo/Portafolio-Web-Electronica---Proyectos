@@ -13,6 +13,8 @@ interface PreviewOverlayProps {
   publishLoading?: boolean;
   publishLabel?: string;
   subtitle?: string;
+  onTogglePublish?: () => void;
+  toggleLoading?: boolean;
 }
 
 export function PreviewOverlay({
@@ -23,6 +25,8 @@ export function PreviewOverlay({
   publishLoading,
   publishLabel = "Publicar y salir",
   subtitle = "Se guarda como borrador",
+  onTogglePublish,
+  toggleLoading,
 }: PreviewOverlayProps) {
   return (
     <AnimatePresence>
@@ -59,6 +63,15 @@ export function PreviewOverlay({
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                {onTogglePublish && (
+                  <Button
+                    variant={post.published ? "danger" : "secondary"}
+                    onClick={onTogglePublish}
+                    isLoading={toggleLoading}
+                  >
+                    {post.published ? "Ocultar al público" : "Hacer pública"}
+                  </Button>
+                )}
                 {onPublish && (
                   <Button onClick={onPublish} isLoading={publishLoading}>
                     {publishLabel}
