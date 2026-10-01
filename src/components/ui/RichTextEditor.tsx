@@ -104,7 +104,23 @@ export function RichTextEditor({
   function insertLink() {
     const url = prompt("URL del enlace:");
     if (!url) return;
-    editor.chain().focus().setLink({ href: url }).run();
+
+    const { from, to } = editor.state.selection;
+    if (from === to) {
+      const text = prompt("Texto del enlace:", url);
+      if (!text) return;
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: "text",
+          text,
+          marks: [{ type: "link", attrs: { href: url } }],
+        })
+        .run();
+    } else {
+      editor.chain().focus().setLink({ href: url }).run();
+    }
   }
 
   function insertYoutube() {
