@@ -6,7 +6,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const { action } = await request.json();
-  const analytics = await toggleLike(id, action === "like");
+  const { action, visitorId } = await request.json();
+
+  if (!visitorId) {
+    return NextResponse.json(
+      { success: false, error: "visitorId requerido" },
+      { status: 400 }
+    );
+  }
+
+  const analytics = await toggleLike(id, visitorId, action === "like");
   return NextResponse.json({ success: true, data: analytics });
 }

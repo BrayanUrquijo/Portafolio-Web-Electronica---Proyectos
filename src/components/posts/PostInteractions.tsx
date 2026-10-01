@@ -4,6 +4,16 @@ import { useEffect, useState, useRef } from "react";
 import { formatDate } from "@/lib/utils";
 import type { Comment } from "@/lib/data/types";
 
+function getVisitorId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem("visitor-id");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("visitor-id", id);
+  }
+  return id;
+}
+
 function getLikedPosts(): string[] {
   if (typeof window === "undefined") return [];
   try {
@@ -63,13 +73,11 @@ export function PostInteractions({ postId }: { postId: string }) {
     }
 
     try {
-      const res = await fetch(`/api/posts/${postId}/like`, {
+      await fetch(`/api/posts/${postId}/like`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, visitorId: getVisitorId() }),
       });
-      const data = await res.json();
-      if (data.data) setLikes(data.data.likes);
     } catch {
       setLiked(liked);
       setLikes((prev) => prev + (liked ? 1 : -1));
