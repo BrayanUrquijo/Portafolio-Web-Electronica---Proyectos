@@ -56,9 +56,16 @@ export class BlobStorage implements DataStorage {
   }
 
   async updatePost(id: string, data: Partial<Post>): Promise<Post> {
-    const posts = await this.getPosts();
-    const index = posts.findIndex((p) => p.id === id);
-    if (index === -1) throw new Error("Post not found");
+    let posts = await this.getPosts();
+    let index = posts.findIndex((p) => p.id === id);
+
+    if (index === -1) {
+      await new Promise((r) => setTimeout(r, 1500));
+      posts = await this.getPosts();
+      index = posts.findIndex((p) => p.id === id);
+      if (index === -1) throw new Error("Post not found");
+    }
+
     posts[index] = { ...posts[index], ...data, updatedAt: new Date().toISOString() };
     await writeBlob(POSTS_KEY, posts);
     return posts[index];

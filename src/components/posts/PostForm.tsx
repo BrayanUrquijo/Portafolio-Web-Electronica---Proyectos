@@ -120,7 +120,7 @@ export function PostForm({ post }: PostFormProps) {
       const res = await fetch(`/api/posts/${previewPost.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ published: true }),
+        body: JSON.stringify({ ...previewPost, published: true }),
       });
       if (res.ok) {
         router.push("/admin/posts");
