@@ -22,8 +22,8 @@ export default function AdminPostsPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("¿Eliminar esta publicación?")) return;
-    await fetch(`/api/posts/${id}`, { method: "DELETE" });
     setPosts((prev) => prev.filter((p) => p.id !== id));
+    fetch(`/api/posts/${id}`, { method: "DELETE" }).catch(() => {});
   }
 
   return (

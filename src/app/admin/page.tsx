@@ -61,6 +61,9 @@ export default function AdminLoginPage() {
           <Button type="submit" isLoading={loading} className="w-full">
             Ingresar
           </Button>
+          <Button type="button" variant="ghost" className="w-full" onClick={() => router.push("/")}>
+            Volver al inicio
+          </Button>
         </form>
       </div>
     </div>
