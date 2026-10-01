@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PostCard } from "./PostCard";
-import type { Post } from "@/lib/data/types";
+import type { Post, PostAnalytics } from "@/lib/data/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -17,7 +17,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function PostGrid({ posts }: { posts: Post[] }) {
+export function PostGrid({ posts, analytics }: { posts: Post[]; analytics?: Record<string, PostAnalytics> }) {
   if (posts.length === 0) {
     return (
       <div className="text-center py-20">
@@ -40,7 +40,7 @@ export function PostGrid({ posts }: { posts: Post[] }) {
     >
       {posts.map((post) => (
         <motion.div key={post.id} variants={item}>
-          <PostCard post={post} />
+          <PostCard post={post} analytics={analytics?.[post.id]} />
         </motion.div>
       ))}
     </motion.div>

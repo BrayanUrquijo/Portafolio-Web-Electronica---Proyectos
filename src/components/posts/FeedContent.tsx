@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { SplashScreen } from "@/components/splash/SplashScreen";
 import { PostGrid } from "@/components/posts/PostGrid";
 import { PostFilters } from "@/components/posts/PostFilters";
-import type { Post, PostCategory } from "@/lib/data/types";
+import type { Post, PostCategory, PostAnalytics } from "@/lib/data/types";
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ");
@@ -16,6 +16,14 @@ export function FeedContent({ posts }: { posts: Post[] }) {
   const category = searchParams.get("category") as PostCategory | null;
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [analytics, setAnalytics] = useState<Record<string, PostAnalytics>>({});
+
+  useEffect(() => {
+    fetch("/api/analytics")
+      .then((r) => r.json())
+      .then((data) => setAnalytics(data.data || {}))
+      .catch(() => {});
+  }, []);
 
   const results = useMemo(() => {
     let filtered = category
@@ -104,7 +112,7 @@ export function FeedContent({ posts }: { posts: Post[] }) {
           </button>
         </div>
 
-        <PostGrid posts={results} />
+        <PostGrid posts={results} analytics={analytics} />
       </div>
     </SplashScreen>
   );

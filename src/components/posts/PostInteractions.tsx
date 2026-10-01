@@ -30,20 +30,22 @@ export function PostInteractions({ postId }: { postId: string }) {
   useEffect(() => {
     setLiked(getLikedPosts().includes(postId));
 
+    fetch(`/api/posts/${postId}/view`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.data) {
+          setViews(data.data.views);
+          setLikes(data.data.likes);
+        }
+      });
+
     fetch(`/api/posts/${postId}/comments`)
       .then((r) => r.json())
       .then((data) => setComments(data.data || []));
 
     if (!viewRegistered.current) {
       viewRegistered.current = true;
-      fetch(`/api/posts/${postId}/view`, { method: "POST" })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.data) {
-            setViews(data.data.views);
-            setLikes(data.data.likes);
-          }
-        });
+      fetch(`/api/posts/${postId}/view`, { method: "POST" }).catch(() => {});
     }
   }, [postId]);
 

@@ -25,6 +25,10 @@ async function writeAnalytics(data: AnalyticsMap): Promise<void> {
   });
 }
 
+export async function getAllAnalytics(): Promise<AnalyticsMap> {
+  return readAnalytics();
+}
+
 export async function getPostAnalytics(postId: string): Promise<PostAnalytics> {
   const all = await readAnalytics();
   return all[postId] || { views: 0, likes: 0 };

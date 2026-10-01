@@ -103,7 +103,7 @@ export default function AdminPostsPage() {
           {posts.map((post) => (
             <div
               key={post.id}
-              className="flex items-center justify-between gap-4 p-4 rounded-lg
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4 rounded-lg
                          bg-surface-card border border-surface-border"
             >
               <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ export default function AdminPostsPage() {
                   <span>{formatDate(post.createdAt)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                 <button
                   onClick={() => openComments(post)}
                   className="relative p-2 rounded-lg text-text-muted hover:text-neon-cyan hover:bg-surface-elevated transition-colors"
