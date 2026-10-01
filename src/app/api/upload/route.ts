@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: {
-          url: blob.downloadUrl,
+          url: `/api/serve-file?path=${encodeURIComponent(blob.pathname)}`,
           publicId: blob.pathname,
           format: file.name.split(".").pop() || "",
           filename: file.name,
