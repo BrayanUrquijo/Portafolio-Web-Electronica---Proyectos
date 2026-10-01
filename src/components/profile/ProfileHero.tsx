@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { Lightbox } from "@/components/ui/Lightbox";
 import type { Profile } from "@/lib/data/types";
 
 export function ProfileHero({ profile }: { profile: Profile }) {
+  const [photoOpen, setPhotoOpen] = useState(false);
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -12,7 +16,11 @@ export function ProfileHero({ profile }: { profile: Profile }) {
       className="text-center space-y-6"
     >
       <div className="relative inline-block">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-neon-cyan glow-cyan mx-auto">
+        <div
+          className={`w-32 h-32 rounded-full overflow-hidden border-2 border-neon-cyan glow-cyan mx-auto
+                      ${profile.photoUrl ? "cursor-pointer hover:border-neon-magenta transition-colors" : ""}`}
+          onClick={() => profile.photoUrl && setPhotoOpen(true)}
+        >
           {profile.photoUrl ? (
             <Image
               src={profile.photoUrl}
@@ -30,6 +38,16 @@ export function ProfileHero({ profile }: { profile: Profile }) {
           )}
         </div>
       </div>
+
+      {profile.photoUrl && (
+        <Lightbox
+          images={[{ url: profile.photoUrl, alt: profile.name, width: 512, height: 512 }]}
+          index={0}
+          open={photoOpen}
+          onClose={() => setPhotoOpen(false)}
+          enableZoom={false}
+        />
+      )}
 
       <div>
         <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">

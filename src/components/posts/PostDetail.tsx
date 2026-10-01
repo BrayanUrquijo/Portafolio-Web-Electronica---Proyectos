@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/Badge";
+import { Lightbox } from "@/components/ui/Lightbox";
 import { MarkdownViewer } from "@/components/media/MarkdownViewer";
 import { PostInteractions } from "@/components/posts/PostInteractions";
 import { formatDate } from "@/lib/utils";
@@ -19,6 +21,13 @@ const categoryColors: Record<string, "cyan" | "magenta" | "violet" | "green" | "
 };
 
 export function PostDetail({ post, isPreview }: { post: Post; isPreview?: boolean }) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const galleryImages = post.media
+    .filter((m) => m.type === "image")
+    .map((m) => ({ url: m.url, alt: m.alt, width: m.width, height: m.height }));
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -92,13 +101,32 @@ export function PostDetail({ post, isPreview }: { post: Post; isPreview?: boolea
               .map((media, index) => (
                 <div key={index} className="rounded-lg overflow-hidden border border-surface-border">
                   {media.type === "image" ? (
-                    <Image
-                      src={media.url}
-                      alt={media.alt || `Imagen ${index + 1}`}
-                      width={media.width || 800}
-                      height={media.height || 600}
-                      className="w-full h-auto"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const imgIdx = galleryImages.findIndex((g) => g.url === media.url);
+                        setLightboxIndex(imgIdx >= 0 ? imgIdx : 0);
+                        setLightboxOpen(true);
+                      }}
+                      className="w-full group relative"
+                    >
+                      <Image
+                        src={media.url}
+                        alt={media.alt || `Imagen ${index + 1}`}
+                        width={media.width || 800}
+                        height={media.height || 600}
+                        className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors
+                                      flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg"
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                        </svg>
+                      </div>
+                    </button>
                   ) : (
                     <video
                       src={media.url}
@@ -112,6 +140,14 @@ export function PostDetail({ post, isPreview }: { post: Post; isPreview?: boolea
           </div>
         </div>
       )}
+
+      <Lightbox
+        images={galleryImages}
+        index={lightboxIndex}
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        enableZoom
+      />
 
       {post.media.filter((m) => m.type === "pdf" || m.type === "markdown").length > 0 && (
         <div className="mt-8">
