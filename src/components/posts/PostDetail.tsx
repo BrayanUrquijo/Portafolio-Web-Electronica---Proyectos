@@ -141,7 +141,7 @@ export function PostDetail({ post }: { post: Post }) {
                         <a
                           href={doc.url}
                           download={doc.filename || "documento.pdf"}
-                          className="text-text-muted text-sm hover:text-text-primary transition-colors"
+                          className="text-neon-cyan text-sm hover:underline"
                         >
                           Descargar
                         </a>

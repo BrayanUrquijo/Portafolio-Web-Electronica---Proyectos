@@ -4,6 +4,8 @@ import { v4 as uuid } from "uuid";
 import { slugify } from "@/lib/utils";
 import type { Post, PostCategory, PostMedia } from "@/lib/data/types";
 
+export const dynamic = "force-dynamic";
+
 function extractCoverFromContent(content: string): PostMedia | undefined {
   const match = content.match(/<img[^>]+src="([^"]+)"[^>]*>/);
   if (!match) return undefined;

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStorage } from "@/lib/data";
 import type { PostMedia } from "@/lib/data/types";
 
+export const dynamic = "force-dynamic";
+
 function extractCoverFromContent(content: string): PostMedia | undefined {
   const match = content.match(/<img[^>]+src="([^"]+)"[^>]*>/);
   if (!match) return undefined;
