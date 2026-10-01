@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { head } from "@vercel/blob";
+import { get, BlobNotFoundError } from "@vercel/blob";
 
 const MIME_TYPES: Record<string, string> = {
   pdf: "application/pdf",
@@ -18,17 +18,15 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const blob = await head(pathname);
-    const res = await fetch(blob.downloadUrl);
-
-    if (!res.ok) {
-      throw new Error(`Blob fetch failed: ${res.status}`);
+    const blob = await get(pathname, { access: "private" });
+    if (!blob) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     const ext = pathname.split(".").pop()?.toLowerCase() || "";
-    const contentType = MIME_TYPES[ext] || blob.contentType || "application/octet-stream";
+    const contentType = MIME_TYPES[ext] || "application/octet-stream";
 
-    const buffer = await res.arrayBuffer();
+    const buffer = await new Response(blob.stream).arrayBuffer();
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": contentType,
@@ -37,7 +35,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof BlobNotFoundError) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
     console.error("serve-file error:", error);
-    return NextResponse.json({ error: "File not found" }, { status: 404 });
+    return NextResponse.json({ error: "Failed to serve file" }, { status: 500 });
   }
 }

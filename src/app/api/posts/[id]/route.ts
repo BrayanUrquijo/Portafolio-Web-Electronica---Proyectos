@@ -23,7 +23,10 @@ export async function GET(
     );
   }
 
-  return NextResponse.json({ success: true, data: post });
+  return NextResponse.json(
+    { success: true, data: post },
+    { headers: { "Cache-Control": "no-store" } }
+  );
 }
 
 export async function PUT(
