@@ -17,6 +17,38 @@ export default function AdminProfilePage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [currentPwd, setCurrentPwd] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdMessage, setPwdMessage] = useState("");
+  const [showPwdSection, setShowPwdSection] = useState(false);
+
+  async function handleChangePassword() {
+    setPwdMessage("");
+    if (newPwd.length < 4) { setPwdMessage("Mínimo 4 caracteres"); return; }
+    if (newPwd !== confirmPwd) { setPwdMessage("Las contraseñas no coinciden"); return; }
+    setPwdLoading(true);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: currentPwd, newPassword: newPwd, confirmPassword: confirmPwd }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPwdMessage("Contraseña actualizada");
+        setCurrentPwd(""); setNewPwd(""); setConfirmPwd("");
+      } else {
+        setPwdMessage(data.error || "Error al cambiar contraseña");
+      }
+    } catch {
+      setPwdMessage("Error de conexión");
+    } finally {
+      setPwdLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetch("/api/profile")
       .then((r) => r.json())
@@ -332,11 +364,64 @@ export default function AdminProfilePage() {
             </p>
           )}
 
-      <div className="flex gap-3 pb-8">
+      <div className="flex gap-3">
         <Button onClick={handleSave} isLoading={saving}>
           Guardar Perfil
         </Button>
       </div>
+
+      <section className="border-t border-surface-border pt-6 space-y-4">
+        <button
+          type="button"
+          onClick={() => setShowPwdSection(!showPwdSection)}
+          className="flex items-center gap-2 text-sm text-text-muted hover:text-neon-cyan transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+          Cambiar contraseña
+          <svg className={`w-3 h-3 transition-transform ${showPwdSection ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {showPwdSection && (
+          <div className="space-y-3 p-4 rounded-lg border border-surface-border bg-surface-card">
+            <Input
+              id="currentPwd"
+              type="password"
+              label="Contraseña actual"
+              value={currentPwd}
+              onChange={(e) => setCurrentPwd(e.target.value)}
+            />
+            <Input
+              id="newPwd"
+              type="password"
+              label="Nueva contraseña"
+              placeholder="Mínimo 4 caracteres"
+              value={newPwd}
+              onChange={(e) => setNewPwd(e.target.value)}
+            />
+            <Input
+              id="confirmPwd"
+              type="password"
+              label="Confirmar nueva contraseña"
+              value={confirmPwd}
+              onChange={(e) => setConfirmPwd(e.target.value)}
+            />
+            {pwdMessage && (
+              <p className={pwdMessage.includes("actualizada") ? "text-neon-green text-sm" : "text-red-400 text-sm"}>
+                {pwdMessage}
+              </p>
+            )}
+            <Button onClick={handleChangePassword} isLoading={pwdLoading} variant="secondary">
+              Cambiar contraseña
+            </Button>
+          </div>
+        )}
+      </section>
+
+      <div className="pb-8" />
     </div>
   );
 }

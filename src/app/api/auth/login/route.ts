@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signToken } from "@/lib/auth/jwt";
+import { verifyPassword } from "@/lib/auth/password";
 
 export async function POST(request: NextRequest) {
   const { password } = await request.json();
 
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  if (!password) {
+    return NextResponse.json(
+      { success: false, error: "Contraseña requerida" },
+      { status: 401 }
+    );
+  }
+
+  const isValid = await verifyPassword(password);
+  if (!isValid) {
     return NextResponse.json(
       { success: false, error: "Contraseña incorrecta" },
       { status: 401 }
