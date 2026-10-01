@@ -76,7 +76,9 @@ export function PostDetail({ post, isPreview }: { post: Post; isPreview?: boolea
                    [&_h3]:text-xl [&_h3]:mt-6 [&_h3]:mb-3
                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4
                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4
-                   [&_li]:mb-1 [&_li]:text-text-secondary"
+                   [&_li]:mb-1 [&_li]:text-text-secondary
+                   [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:my-6
+                   [&_[data-youtube-video]]:my-6"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
