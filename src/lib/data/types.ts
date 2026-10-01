@@ -79,6 +79,18 @@ export interface Profile {
   updatedAt: string;
 }
 
+export interface Comment {
+  id: string;
+  name: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface PostAnalytics {
+  views: number;
+  likes: number;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;

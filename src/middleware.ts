@@ -15,6 +15,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const isPublicInteraction =
+    request.method === "POST" &&
+    /\/api\/posts\/[^/]+\/(view|like|comments)$/.test(pathname);
+  if (isPublicInteraction) {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get("admin-token")?.value;
 
   if (!token) {

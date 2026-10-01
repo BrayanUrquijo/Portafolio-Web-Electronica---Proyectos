@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/Badge";
 import { MarkdownViewer } from "@/components/media/MarkdownViewer";
+import { PostInteractions } from "@/components/posts/PostInteractions";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/lib/data/types";
 
@@ -170,6 +171,8 @@ export function PostDetail({ post, isPreview }: { post: Post; isPreview?: boolea
           ))}
         </div>
       )}
+
+      {!isPreview && <PostInteractions postId={post.id} />}
     </motion.article>
   );
 }
