@@ -199,7 +199,7 @@ export default function AdminPostsPage() {
                   <button
                     onClick={() => handleDeleteComment(comment.id)}
                     className="shrink-0 p-1.5 rounded-lg text-text-muted hover:text-red-400
-                               hover:bg-red-400/10 transition-colors opacity-0 group-hover:opacity-100"
+                               hover:bg-red-400/10 transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                     title="Eliminar comentario"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
