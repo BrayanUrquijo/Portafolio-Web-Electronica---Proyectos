@@ -11,6 +11,8 @@ interface PreviewOverlayProps {
   onClose: () => void;
   onPublish?: () => void;
   publishLoading?: boolean;
+  publishLabel?: string;
+  subtitle?: string;
 }
 
 export function PreviewOverlay({
@@ -19,6 +21,8 @@ export function PreviewOverlay({
   onClose,
   onPublish,
   publishLoading,
+  publishLabel = "Publicar y salir",
+  subtitle = "Se guarda como borrador",
 }: PreviewOverlayProps) {
   return (
     <AnimatePresence>
@@ -57,7 +61,7 @@ export function PreviewOverlay({
               <div className="flex items-center gap-3">
                 {onPublish && (
                   <Button onClick={onPublish} isLoading={publishLoading}>
-                    Publicar y salir
+                    {publishLabel}
                   </Button>
                 )}
                 <Button variant="ghost" onClick={onClose}>
@@ -65,9 +69,9 @@ export function PreviewOverlay({
                 </Button>
               </div>
             </div>
-            {onPublish && (
+            {onPublish && subtitle && (
               <p className="text-center text-xs text-text-muted pb-2">
-                Se guarda como borrador
+                {subtitle}
               </p>
             )}
           </div>

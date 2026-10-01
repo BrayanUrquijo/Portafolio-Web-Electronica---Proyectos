@@ -113,7 +113,12 @@ export function PostForm({ post }: PostFormProps) {
     }
   }
 
-  async function handlePublish() {
+  async function handlePublishAndExit() {
+    if (wasPublished) {
+      router.push("/admin/posts");
+      router.refresh();
+      return;
+    }
     if (!previewPost) return;
     setPublishLoading(true);
     try {
@@ -289,8 +294,10 @@ export function PostForm({ post }: PostFormProps) {
           open={showPreview}
           post={previewPost}
           onClose={() => setShowPreview(false)}
-          onPublish={!wasPublished ? handlePublish : undefined}
+          onPublish={handlePublishAndExit}
           publishLoading={publishLoading}
+          publishLabel={wasPublished ? "Guardar y salir" : "Publicar y salir"}
+          subtitle={wasPublished ? "Cambios guardados" : "Se guarda como borrador"}
         />
       )}
     </>
