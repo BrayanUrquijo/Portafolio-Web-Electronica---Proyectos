@@ -3,6 +3,7 @@ import { Orbitron, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { HelpButton } from "@/components/layout/HelpButton";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -37,6 +38,7 @@ export default function RootLayout({
           <Header />
           <main className="min-h-screen pt-16">{children}</main>
           <Footer />
+          <HelpButton />
         </ThemeProvider>
       </body>
     </html>
